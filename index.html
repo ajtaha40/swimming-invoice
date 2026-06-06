@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swimming Supervisor Invoice Form</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #5c4033 0%, #3e2723 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: white;
+            padding: 30px 20px;
+            text-align: center;
+            border-bottom: 3px solid #5c4033;
+        }
+        
+        .logo {
+            max-width: 250px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+        
+        .header h1 {
+            font-size: 1.8em;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #5c4033;
+            letter-spacing: 1px;
+        }
+        
+        .header p {
+            font-size: 1em;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .form-section {
+            padding: 30px;
+        }
+        
+        .section-title {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 30px 0 20px 0;
+            border-left: 5px solid #5c4033;
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #5c4033;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 25px;
+        }
+        
+        .form-row.full {
+            grid-template-columns: 1fr;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-size: 0.95em;
+        }
+        
+        input, select, textarea {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 1em;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #5c4033;
+            box-shadow: 0 0 0 3px rgba(92, 64, 51, 0.1);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        .invoice-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 30px 0;
+            background: #f8f9fa;
+            font-size: 12px;
+        }
+        
+        .invoice-table thead {
+            background: #5c4033;
+            color: white;
+        }
+        
+        .invoice-table th {
+            padding: 10px 6px;
+            text-align: left;
+            font-weight: 600;
+            border: 1px solid #ddd;
+            font-size: 11px;
+        }
+        
+        .invoice-table td {
+            padding: 10px 6px;
+            border: 1px solid #ddd;
+            background: white;
+            font-size: 11px;
+        }
+        
+        .invoice-table tbody tr:nth-child(even) td {
+            background: #f8f9fa;
+        }
+        
+        .table-input {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 11px;
+        }
+        
+        /* Hide dropdown arrow from time selects */
+        .time-from, .time-to {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: none !important;
+            padding-right: 6px;
+        }
+        
+        .time-from::-ms-expand, .time-to::-ms-expand {
+            display: none;
+        }
+        
+        .shift-select {
+            background: white;
+            font-weight: 500;
+            font-size: 11px;
+        }
+        
+        .normal-shift {
+            background-color: #e8f5e9 !important;
+            color: #2e7d32;
+            font-weight: 600;
+        }
+        
+        .covering-shift {
+            background-color: #fff3e0 !important;
+            color: #e65100;
+            font-weight: 600;
+        }
+        
+        .private-lesson {
+            background-color: #f3e5f5 !important;
+            color: #6a1b9a;
+            font-weight: 600;
+        }
+        
+        .totals-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            margin: 30px 0;
+        }
+        
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+            font-size: 1em;
+        }
+        
+        .total-label {
+            font-weight: 600;
+        }
+        
+        .total-value {
+            font-weight: 700;
+            font-size: 1.1em;
+            text-align: right;
+        }
+        
+        .breakdown {
+            margin: 15px 0 0 0;
+            padding: 15px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            font-size: 13px;
+        }
+        
+        .breakdown-item {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+        }
+        
+        .grand-total {
+            background: linear-gradient(135deg, #5c4033 0%, #3e2723 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+        
+        .grand-total .total-row {
+            color: white;
+        }
+        
+        .grand-total .total-value {
+            color: white;
+            font-size: 1.6em;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            padding: 14px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 200px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #5c4033 0%, #3e2723 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(92, 64, 51, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #2c3e50;
+        }
+        
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+        
+        .add-row-btn {
+            background: #4caf50;
+            color: white;
+            padding: 10px 20px;
+            width: auto;
+            min-width: auto;
+        }
+        
+        .add-row-btn:hover {
+            background: #45a049;
+        }
+        
+        .remove-btn {
+            background: #f44336;
+            color: white;
+            padding: 8px 12px;
+            width: auto;
+            min-width: auto;
+            font-size: 0.9em;
+        }
+        
+        .remove-btn:hover {
+            background: #da190b;
+        }
+        
+        .signature-container {
+            border: 2px solid #5c4033;
+            border-radius: 6px;
+            padding: 10px;
+            background: white;
+            margin: 15px 0;
+        }
+        
+        #instructorSignature {
+            display: block;
+            width: 100%;
+            height: 120px;
+            cursor: crosshair;
+            background: white;
+            border: 1px solid #ddd;
+        }
+        
+        .success-message {
+            background: #4caf50;
+            color: white;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 20px;
+            display: none;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .invoice-table {
+                font-size: 10px;
+            }
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+                max-width: 100%;
+            }
+            
+            .button-group {
+                display: none;
+            }
+            
+            .action-column {
+                display: none !important;
+            }
+            
+            .form-section {
+                padding: 20px;
+            }
+            
+            .invoice-table {
+                page-break-inside: avoid;
+            }
+            
+            #instructorSignature {
+                border: 1px solid #000 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="invoiceContainer">
+        <div class="header">
+            <img src="dl-logo.jpg" alt="David Lloyd Clubs" class="logo">
+            <h1>🏊 Swimming Supervisor Services - DL Invoice form</h1>
+            <h2 style="font-size: 1.2em; color: #666; margin-top: 10px;">David Lloyd Cricklewoodlane</h2>
+            <p>Invoice to: Taha Ajmi</p>
+        </div>
+        
+        <div class="form-section">
+            <form id="invoiceForm">
+                <!-- INVOICE DETAILS -->
+                <div class="section-title">📋 Invoice Details</div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="invoiceTo">Invoice To:</label>
+                        <input type="text" id="invoiceTo" name="invoiceTo" value="David Lloyd Cricklewoodlane" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="invoiceNo">Invoice Number: *</label>
+                        <select id="invoiceNo" name="invoiceNo" required>
+                            <option value="">-- Select Invoice Number --</option>
+                            <option value="INV-2026-06">INV-2026-06</option>
+                            <option value="INV-2026-07">INV-2026-07</option>
+                            <option value="INV-2026-08">INV-2026-08</option>
+                            <option value="INV-2026-09">INV-2026-09</option>
+                            <option value="INV-2026-10">INV-2026-10</option>
+                            <option value="INV-2026-11">INV-2026-11</option>
+                            <option value="INV-2026-12">INV-2026-12</option>
+                            <option value="INV-2027-01">INV-2027-01</option>
+                            <option value="INV-2027-02">INV-2027-02</option>
+                            <option value="INV-2027-03">INV-2027-03</option>
+                            <option value="INV-2027-04">INV-2027-04</option>
+                            <option value="INV-2027-05">INV-2027-05</option>
+                            <option value="INV-2027-06">INV-2027-06</option>
+                            <option value="INV-2027-07">INV-2027-07</option>
+                            <option value="INV-2027-08">INV-2027-08</option>
+                            <option value="INV-2027-09">INV-2027-09</option>
+                            <option value="INV-2027-10">INV-2027-10</option>
+                            <option value="INV-2027-11">INV-2027-11</option>
+                            <option value="INV-2027-12">INV-2027-12</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <!-- PERSONAL INFORMATION -->
+                <div class="section-title">👤 Your Information</div>
+                
+                <div class="form-row full">
+                    <div class="form-group">
+                        <label for="name">Instructors Full Name: *</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="address1">Address Line 1:</label>
+                        <input type="text" id="address1" name="address1">
+                    </div>
+                    <div class="form-group">
+                        <label for="address2">Address Line 2:</label>
+                        <input type="text" id="address2" name="address2">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="city">City:</label>
+                        <input type="text" id="city" name="city">
+                    </div>
+                    <div class="form-group">
+                        <label for="postcode">Postcode:</label>
+                        <input type="text" id="postcode" name="postcode">
+                    </div>
+                </div>
+                
+                <div class="form-row full">
+                    <div class="form-group">
+                        <label for="contact">Contact Number:</label>
+                        <input type="tel" id="contact" name="contact">
+                    </div>
+                </div>
+                
+                <!-- WORK ENTRIES -->
+                <div class="section-title">⏰ Work Sessions</div>
+                
+                <p class="help-text" style="margin-bottom: 20px; font-size: 0.85em; color: #666;">Add each shift, covering shift, or private lesson below. Choose the correct type and the rate will show automatically!</p>
+                
+                <table class="invoice-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 65px;">Date</th>
+                            <th style="width: 40px;">Day</th>
+                            <th style="width: 50px;">From</th>
+                            <th style="width: 50px;">To</th>
+                            <th style="width: 100px;">Type of Work</th>
+                            <th style="width: 55px;">Duration</th>
+                            <th style="width: 60px;">Rate/Hr</th>
+                            <th style="width: 60px;">Total</th>
+                            <th class="action-column" style="width: 55px;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                    </tbody>
+                </table>
+                
+                <button type="button" class="add-row-btn" onclick="addRow()">+ Add Another Session</button>
+                
+                <!-- TOTALS -->
+                <div class="totals-section">
+                    <div class="total-row">
+                        <span class="total-label">Total Hours:</span>
+                        <span class="total-value" id="totalHours">0.00</span>
+                    </div>
+                    
+                    <!-- BREAKDOWN BY TYPE -->
+                    <div class="breakdown">
+                        <div style="font-weight: bold; margin-bottom: 8px;">Breakdown by Type:</div>
+                        <div class="breakdown-item">
+                            <span>Normal Shift (£22.00/hr):</span>
+                            <span><strong id="normalHours">0.00</strong> hours = <strong id="normalTotal">£0.00</strong></span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Covering Shift (£20.00/hr):</span>
+                            <span><strong id="coveringHours">0.00</strong> hours = <strong id="coveringTotal">£0.00</strong></span>
+                        </div>
+                        <div class="breakdown-item">
+                            <span>Private Lesson 1-to-1 (£20.00/hr):</span>
+                            <span><strong id="privateHours">0.00</strong> hours = <strong id="privateTotal">£0.00</strong></span>
+                        </div>
+                    </div>
+                    
+                    <div class="total-row" style="margin-top: 20px;">
+                        <span class="total-label">Total Amount Due:</span>
+                        <span class="total-value" id="totalAmount">£0.00</span>
+                    </div>
+                    
+                    <div class="grand-total">
+                        <div class="total-row">
+                            <span class="total-label">GRAND TOTAL:</span>
+                            <span class="total-value" id="grandTotal">£0.00</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- NOTES & SIGNATURE -->
+                <div class="section-title">📝 Additional Information</div>
+                
+                <div class="form-row full">
+                    <div class="form-group">
+                        <label for="notes">Notes (Optional):</label>
+                        <textarea id="notes" name="notes" placeholder="Any additional notes..."></textarea>
+                    </div>
+                </div>
+                
+                <!-- INSTRUCTOR SIGNATURE -->
+                <div class="section-title">✍️ Instructor Signature</div>
+                
+                <div class="form-row full">
+                    <div class="form-group">
+                        <label>Signature (Draw below):</label>
+                        <div class="signature-container">
+                            <canvas id="instructorSignature"></canvas>
+                        </div>
+                        <button type="button" class="btn-secondary" onclick="clearSignature('instructorSignature')" style="width: auto; min-width: 120px; padding: 8px 15px; margin-top: 10px;">Clear Signature</button>
+                    </div>
+                </div>
+                
+                <!-- BUTTONS -->
+                <div class="button-group">
+                    <button type="button" class="btn-secondary" onclick="resetForm()">Clear Form</button>
+                
+                <div class="success-message" id="successMessage">
+                    ✅ Invoice downloaded successfully!
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize signature canvas
+        function initializeSignatures() {
+            setupSignatureCanvas('instructorSignature');
+        }
+        
+        function setupSignatureCanvas(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            const container = canvas.parentElement;
+            
+            // Set canvas size to container size
+            canvas.width = container.offsetWidth;
+            canvas.height = 120;
+            
+            const ctx = canvas.getContext('2d');
+            let isDrawing = false;
+            
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#000000';
+            
+            canvas.addEventListener('mousedown', (e) => {
+                isDrawing = true;
+                const rect = canvas.getBoundingClientRect();
+                ctx.beginPath();
+                ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
+            });
+            
+            canvas.addEventListener('mousemove', (e) => {
+                if (!isDrawing) return;
+                const rect = canvas.getBoundingClientRect();
+                ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+                ctx.stroke();
+            });
+            
+            canvas.addEventListener('mouseup', () => isDrawing = false);
+            canvas.addEventListener('mouseout', () => isDrawing = false);
+        }
+        
+        function clearSignature(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+        
+        // Generate time options with hours AND 5-minute increments
+        function generateTimeOptions() {
+            let options = '<option value="">--:--</option>';
+            
+            for (let hour = 0; hour < 24; hour++) {
+                // Add full hour
+                const hourTime = String(hour).padStart(2, '0') + ':00';
+                options += `<option value="${hourTime}">${hourTime}</option>`;
+                
+                // Add 5-minute increments
+                const minutes = [5, 10, 15, 20, 30, 35, 40, 45];
+                for (let min of minutes) {
+                    const timeStr = String(hour).padStart(2, '0') + ':' + String(min).padStart(2, '0');
+                    options += `<option value="${timeStr}">${timeStr}</option>`;
+                }
+            }
+            return options;
+        }
+        
+        // Initialize with 1 empty row
+        function initializeForm() {
+            const tableBody = document.getElementById('tableBody');
+            tableBody.innerHTML = '';
+            addRow();
+            initializeSignatures();
+        }
+        
+        function addRow() {
+            const tableBody = document.getElementById('tableBody');
+            const timeOptions = generateTimeOptions();
+            
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><input type="date" class="table-input date-input" onchange="updateCalculations()"></td>
+                <td><input type="text" class="table-input day-input" readonly style="background: #f0f0f0; font-weight: 600; font-size: 11px; text-align: center;"></td>
+                <td>
+                    <select class="table-input time-from" onchange="calculateDuration(this); updateCalculations()">
+                        ${timeOptions}
+                    </select>
+                </td>
+                <td>
+                    <select class="table-input time-to" onchange="calculateDuration(this); updateCalculations()">
+                        ${timeOptions}
+                    </select>
+                </td>
+                <td>
+                    <select class="table-input shift-select" onchange="updateCalculations()">
+                        <option value="">-- Select --</option>
+                        <option value="normal">Normal Shift</option>
+                        <option value="covering">Covering Shift</option>
+                        <option value="private">Private Lesson</option>
+                    </select>
+                </td>
+                <td><input type="text" class="table-input duration-input" readonly style="background: #f0f0f0; font-size: 11px; text-align: center;"></td>
+                <td><input type="text" class="table-input rate-input" onchange="updateCalculations()" style="font-size: 11px; text-align: center;" placeholder="£22.00"></td>
+                <td><input type="text" class="table-input total-input" readonly style="background: #f0f0f0; font-weight: bold; font-size: 11px; text-align: center;"></td>
+                <td class="action-column"><button type="button" class="remove-btn" onclick="removeRow(this)">Remove</button></td>
+            `;
+            
+            tableBody.appendChild(row);
+        }
+        
+        function removeRow(button) {
+            if (document.getElementById('tableBody').children.length > 1) {
+                button.closest('tr').remove();
+                updateCalculations();
+            } else {
+                alert('You must keep at least one row!');
+            }
+        }
+        
+        function calculateDuration(timeInput) {
+            const row = timeInput.closest('tr');
+            const timeFromSelect = row.querySelector('.time-from');
+            const timeToSelect = row.querySelector('.time-to');
+            const durationInput = row.querySelector('.duration-input');
+            
+            if (timeFromSelect.value && timeToSelect.value) {
+                const [fromHours, fromMins] = timeFromSelect.value.split(':').map(Number);
+                const [toHours, toMins] = timeToSelect.value.split(':').map(Number);
+                
+                let fromTime = fromHours * 60 + fromMins;
+                let toTime = toHours * 60 + toMins;
+                
+                if (toTime <= fromTime) {
+                    toTime += 24 * 60;
+                }
+                
+                const duration = (toTime - fromTime) / 60;
+                durationInput.value = duration.toFixed(2);
+            } else {
+                durationInput.value = '';
+            }
+        }
+        
+        function updateCalculations() {
+            const rows = document.querySelectorAll('#tableBody tr');
+            let totalHours = 0;
+            let totalAmount = 0;
+            let normalHours = 0, coveringHours = 0, privateHours = 0;
+            let normalTotal = 0, coveringTotal = 0, privateTotal = 0;
+            
+            rows.forEach(row => {
+                const dateInput = row.querySelector('.date-input');
+                const dayInput = row.querySelector('.day-input');
+                const shiftSelect = row.querySelector('select.shift-select');
+                const durationInput = row.querySelector('.duration-input');
+                const rateInput = row.querySelector('.rate-input');
+                const totalInput = row.querySelector('.total-input');
+                
+                // Update day of week - SHORT names
+                if (dateInput.value) {
+                    const date = new Date(dateInput.value);
+                    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                    dayInput.value = days[date.getDay()];
+                }
+                
+                // Set default rate based on shift type - with £ symbol
+                if (shiftSelect.value && !rateInput.dataset.manuallySet) {
+                    if (shiftSelect.value === 'normal') {
+                        rateInput.value = '£22.00';
+                        shiftSelect.className = 'table-input shift-select normal-shift';
+                    } else if (shiftSelect.value === 'covering') {
+                        rateInput.value = "£22.00";
+                        shiftSelect.className = 'table-input shift-select covering-shift';
+                    } else if (shiftSelect.value === 'private') {
+                        rateInput.value = "£22.00";
+                        shiftSelect.className = 'table-input shift-select private-lesson';
+                    }
+                } else if (!shiftSelect.value) {
+                    rateInput.value = '';
+                    shiftSelect.className = 'table-input shift-select';
+                }
+                
+                // Allow user to edit rate - mark as manually set
+                rateInput.addEventListener('focus', function() {
+                    rateInput.dataset.manuallySet = true;
+                });
+                
+                // Calculate row total - handle £ symbol in rate
+                const durationText = durationInput.value;
+                const duration = parseFloat(durationText) || 0;
+                const rateText = rateInput.value.replace('£', '');
+                const rate = parseFloat(rateText) || 0;
+                const rowTotal = duration * rate;
+                
+                if (shiftSelect.value && duration > 0 && rate > 0) {
+                    totalInput.value = '£' + rowTotal.toFixed(2);
+                    totalHours += duration;
+                    totalAmount += rowTotal;
+                    
+                    // Breakdown by type
+                    if (shiftSelect.value === 'normal') {
+                        normalHours += duration;
+                        normalTotal += rowTotal;
+                    } else if (shiftSelect.value === 'covering') {
+                        coveringHours += duration;
+                        coveringTotal += rowTotal;
+                    } else if (shiftSelect.value === 'private') {
+                        privateHours += duration;
+                        privateTotal += rowTotal;
+                    }
+                } else {
+                    totalInput.value = '';
+                }
+            });
+            
+            // Update totals
+            document.getElementById('totalHours').textContent = totalHours.toFixed(2);
+            document.getElementById('totalAmount').textContent = '£' + totalAmount.toFixed(2);
+            document.getElementById('grandTotal').textContent = '£' + totalAmount.toFixed(2);
+            
+            // Update breakdown
+            document.getElementById('normalHours').textContent = normalHours.toFixed(2);
+            document.getElementById('normalTotal').textContent = '£' + normalTotal.toFixed(2);
+            document.getElementById('coveringHours').textContent = coveringHours.toFixed(2);
+            document.getElementById('coveringTotal').textContent = '£' + coveringTotal.toFixed(2);
+            document.getElementById('privateHours').textContent = privateHours.toFixed(2);
+            document.getElementById('privateTotal').textContent = '£' + privateTotal.toFixed(2);
+        }
+        
+        function resetForm() {
+            if (confirm('Are you sure you want to clear the entire form?')) {
+                document.getElementById('invoiceForm').reset();
+                document.getElementById('invoiceNo').value = '';
+                clearSignature('instructorSignature');
+                initializeForm();
+            }
+        }
+        
+        function downloadPDF() {
+            const name = document.getElementById('name').value.trim();
+            const invoiceNo = document.getElementById('invoiceNo').value;
+            
+            if (!name) {
+                alert('Please enter your name before downloading!');
+                return;
+            }
+            
+            if (!invoiceNo) {
+                alert('Please select an Invoice Number!');
+                return;
+            }
+            
+            const hasData = document.querySelectorAll('#tableBody .shift-select').some(s => s.value !== '');
+            
+            if (!hasData) {
+                alert('Please add at least one work session before downloading!');
+                return;
+            }
+            
+            const element = document.getElementById('invoiceContainer');
+            const filename = `Invoice_${invoiceNo}_${name.replace(/\s+/g, '_')}.pdf`;
+            
+            const opt = {
+                margin: [10, 10, 10, 10],
+                filename: filename,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, logging: false },
+                jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+            };
+            
+            html2pdf().set(opt).from(element).save().then(() => {
+                const msg = document.getElementById('successMessage');
+                msg.style.display = 'block';
+                setTimeout(() => {
+                    msg.style.display = 'none';
+                }, 3000);
+            }).catch(error => {
+                alert('Error generating PDF. Please try again.');
+                console.error(error);
+            });
+        }
+        
+        // Initialize form on page load
+        window.addEventListener('load', initializeForm);
+    </script>
+</body>
+</html>
